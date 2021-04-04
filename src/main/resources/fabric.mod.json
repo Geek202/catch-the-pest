@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "catch-the-pest",
+  "version": "${version}",
+  "name": "Catch The Pest",
+  "description": "Catch the pest!",
+  "authors": [
+    "Tom_The_Geek"
+  ],
+  "license": "LGPLv3",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.geek.tom.thesewer.CatchThePest"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.9.1",
+    "fabric": "*",
+    "minecraft": "1.16.4",
+    "plasmid": "0.4.x"
+  }
+}
