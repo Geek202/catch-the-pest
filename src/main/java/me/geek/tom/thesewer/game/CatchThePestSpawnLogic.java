@@ -10,13 +10,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameMode;
 import me.geek.tom.thesewer.CatchThePest;
-import me.geek.tom.thesewer.game.map.TheSewerMap;
+import me.geek.tom.thesewer.game.map.CatchThePestMap;
+import xyz.nucleoid.plasmid.util.BlockBounds;
 
 public class CatchThePestSpawnLogic {
     private final GameSpace gameSpace;
-    private final TheSewerMap map;
+    private final CatchThePestMap map;
 
-    public CatchThePestSpawnLogic(GameSpace gameSpace, TheSewerMap map) {
+    public CatchThePestSpawnLogic(GameSpace gameSpace, CatchThePestMap map) {
         this.gameSpace = gameSpace;
         this.map = map;
     }
@@ -25,28 +26,21 @@ public class CatchThePestSpawnLogic {
         player.setGameMode(gameMode);
         player.setVelocity(Vec3d.ZERO);
         player.fallDistance = 0.0f;
-
-        player.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.NIGHT_VISION,
-                20 * 60 * 60,
-                1,
-                true,
-                false
-        ));
     }
 
-    public void spawnPlayer(ServerPlayerEntity player) {
+    public void spawnPlayer(ServerPlayerEntity player, CatchThePestPlayer participant) {
         ServerWorld world = this.gameSpace.getWorld();
 
-        BlockPos pos = this.map.spawn;
-        if (pos == null) {
+        BlockBounds bounds = (participant == null || participant.isPest) ? this.map.pestSpawn : this.map.hunterSpawn;
+        if (bounds == null) {
             CatchThePest.LOGGER.error("Cannot spawn player! No spawn is defined in the map!");
             return;
         }
+        BlockPos pos = bounds.getMin();
 
-        float radius = 4.5f;
-        float x = pos.getX() + MathHelper.nextFloat(player.getRandom(), -radius, radius);
-        float z = pos.getZ() + MathHelper.nextFloat(player.getRandom(), -radius, radius);
+        BlockPos size = bounds.getSize();
+        float x = pos.getX() + MathHelper.nextFloat(player.getRandom(), 0, size.getX() - .5f); // subtract .5 to prevent clipping in a wall
+        float z = pos.getZ() + MathHelper.nextFloat(player.getRandom(), 0, size.getZ() - .5f);
 
         player.teleport(world, x, pos.getY(), z, 0.0F, 0.0F);
     }

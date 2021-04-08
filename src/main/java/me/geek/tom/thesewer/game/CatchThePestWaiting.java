@@ -1,22 +1,23 @@
 package me.geek.tom.thesewer.game;
 
 import net.minecraft.util.ActionResult;
+import net.minecraft.world.GameRules;
 import xyz.nucleoid.plasmid.game.*;
 import xyz.nucleoid.plasmid.game.event.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
-import me.geek.tom.thesewer.game.map.TheSewerMap;
-import me.geek.tom.thesewer.game.map.TheSewerMapGenerator;
+import me.geek.tom.thesewer.game.map.CatchThePestMap;
+import me.geek.tom.thesewer.game.map.CatchThePestMapGenerator;
 import xyz.nucleoid.fantasy.BubbleWorldConfig;
 
 public class CatchThePestWaiting {
     private final GameSpace gameSpace;
-    private final TheSewerMap map;
+    private final CatchThePestMap map;
     private final CatchThePestConfig config;
     private final CatchThePestSpawnLogic spawnLogic;
 
-    private CatchThePestWaiting(GameSpace gameSpace, TheSewerMap map, CatchThePestConfig config) {
+    private CatchThePestWaiting(GameSpace gameSpace, CatchThePestMap map, CatchThePestConfig config) {
         this.gameSpace = gameSpace;
         this.map = map;
         this.config = config;
@@ -25,11 +26,12 @@ public class CatchThePestWaiting {
 
     public static GameOpenProcedure open(GameOpenContext<CatchThePestConfig> context) {
         CatchThePestConfig config = context.getConfig();
-        TheSewerMapGenerator generator = new TheSewerMapGenerator(config.mapConfig);
-        TheSewerMap map = generator.build();
+        CatchThePestMapGenerator generator = new CatchThePestMapGenerator(config.mapConfig);
+        CatchThePestMap map = generator.build();
 
         BubbleWorldConfig worldConfig = new BubbleWorldConfig()
                 .setGenerator(map.asGenerator(context.getServer()))
+                .setGameRule(GameRules.NATURAL_REGENERATION, false)
                 .setDefaultGameMode(GameMode.SPECTATOR);
 
         return context.createOpenProcedure(worldConfig, game -> {
@@ -60,6 +62,6 @@ public class CatchThePestWaiting {
 
     private void spawnPlayer(ServerPlayerEntity player) {
         this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE);
-        this.spawnLogic.spawnPlayer(player);
+        this.spawnLogic.spawnPlayer(player, null);
     }
 }

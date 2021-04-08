@@ -1,14 +1,11 @@
 {
   "type": "catch-the-pest:the-sewer",
   "map": {
-    "spawn_block": {
-      "Name": "minecraft:red_terracotta",
-      "Properties": {}
-    }
+    "map_template": "catch-the-pest:sewer"
   },
   "players": {
     "min": 1,
-    "max": 100
+    "max": 10
   },
   "time_limit_secs": 300
 }
